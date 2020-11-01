@@ -1,0 +1,143 @@
+package julyLong;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.TreeMap;
+
+public class Fifth {
+
+	public static void main(String[] args) throws IOException {
+
+		FastReader sc = new FastReader();
+		int q = sc.nextInt();
+		PrintWriter out = new PrintWriter(new BufferedWriter(new OutputStreamWriter(System.out)), false);
+		while (q-- > 0) {
+
+			int n = sc.nextInt();
+			Map<Long, Long> ma = new TreeMap<Long, Long>();
+			Map<Long, Long> mb = new TreeMap<Long, Long>();
+			for (int i = 0; i < n; i++) {
+				ma.merge(sc.nextLong(), (long) 1, Long::sum);
+			}
+			for (int i = 0; i < n; i++) {
+				mb.merge(sc.nextLong(), (long) 1, Long::sum);
+			}
+			boolean b = false;
+			List<Long> in = new ArrayList<>();
+			List<Long> im = new ArrayList<>();
+			for (Map.Entry<Long, Long> i : ma.entrySet()) {
+				if (mb.containsKey(i.getKey())) {
+					long k = i.getValue() - mb.get(i.getKey());
+					if (k > 0) {
+						if (k % 2 != 0) {
+							b = true;
+							break;
+						}
+						k /=  2;
+						for (int j = 0; j < k; j++) {
+							in.add(i.getKey());
+						}
+					}
+				} else {
+					if (i.getValue() % 2 != 0) {
+						b = true;
+						break;
+					} else {
+						long k = i.getValue() / 2;
+						for (int j = 0; j < k; j++) {
+							in.add(i.getKey());
+						}
+					}
+				}
+			}
+			for (Map.Entry<Long, Long> i : mb.entrySet()) {
+				if (ma.containsKey(i.getKey())) {
+					long k = i.getValue() - ma.get(i.getKey());
+					if (k > 0) {
+						if (k % 2 != 0) {
+							b = true;
+							break;
+						}
+						k /=  2;
+						for (int j = 0; j < k; j++) {
+							im.add(i.getKey());
+						}
+					}
+				} else {
+					if (i.getValue() % 2 != 0) {
+						b = true;
+						break;
+					} else {
+						long k = i.getValue() / 2;
+						for (int j = 0; j < k; j++) {
+							im.add(i.getKey());
+						}
+					}
+				}
+			}
+			if (b) {
+				out.println(-1);
+			} else {
+				long p = in.size() + im.size();
+				if (p == 0) {
+					out.println(0);
+					continue;
+				}
+				if (in.size() != im.size() || p % 2 != 0) {
+					out.println(-1);
+					continue;
+				}
+				Collections.sort(in);
+				Collections.sort(im);
+				Collections.reverse(im);
+
+				long s = 0;
+				for (int i = 0; i < im.size(); i++) {
+					s += Math.min(in.get(i), im.get(i));
+				}
+				out.println(s);
+			}
+
+		}
+		out.flush();
+	}
+
+	public static class FastReader {
+		BufferedReader br;
+		StringTokenizer st;
+
+		FastReader() {
+			br = new BufferedReader(new InputStreamReader(System.in));
+			st = null;
+		}
+
+		public String next() {
+			if (st == null || !st.hasMoreTokens()) {
+				try {
+					st = new StringTokenizer(br.readLine());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			return st.nextToken();
+		}
+
+		public int nextInt() {
+			return Integer.parseInt(next());
+		}
+
+		public long nextLong() {
+			return Long.parseLong(next());
+		}
+	}
+
+}
